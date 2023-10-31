@@ -62,7 +62,7 @@ for s in sources:
 print("--------------------------------------------")
 print(f"Date and time: {datetime.now()}")
 
-with open("output.txt", "a") as file:
+with open(f"output_{datetime.now().strftime('%Y%m%d_%H%M')}.txt", "a") as file:
     file.write("===========================================\n")
     file.write("Initiating process: Displaying all sources\n")
     file.write("===========================================\n")
