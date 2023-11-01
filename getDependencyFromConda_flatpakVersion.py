@@ -19,25 +19,26 @@ def load_json_file():
     return links
 
 def process_links(links):
+    tarbz2=False
     install = []
     mamba_install = []
     sources = []
     print("Initiating process: Processing each link")
     for link in links:
         name, version, platform, dist_name = link['name'], link['version'], link['platform'], link['dist_name']
-        install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {name}.conda')
-        mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{name}.conda')
         url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.conda'
         print(f"Process: Downloading file from URL: {url}")
         file_name = f'{name}.conda'
         response = requests.get(url)
         if response.status_code != 200:
             url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.tar.bz2'
+            tarbz2=True
             print(f"Process: Downloading file from URL: {url}")
             response = requests.get(url)
             if response.status_code != 200:
                 print("Failure occurred. Exception handling initiated. Unable to download file.")
                 continue
+            file_name = f'{name}.tar.bz2'
         with open(file_name, 'wb') as file:
             file.write(response.content)
         with open(file_name, 'rb') as file:
@@ -53,6 +54,12 @@ def process_links(links):
             'sha256': sha256_hash,
             'dest-filename': file_name
         })
+        if tarbz2:
+            install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {file_name}.tar.bz2')
+            mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{file_name}.tar.bz2')
+        else:
+            install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {file_name}.conda')
+            mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{file_name}.conda')
         os.remove(file_name)
             
     return install, mamba_install, sources
