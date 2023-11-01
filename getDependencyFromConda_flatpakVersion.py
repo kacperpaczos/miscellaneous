@@ -24,7 +24,6 @@ def process_links(links):
     sources = []
     print("Initiating process: Processing each link")
     for link in links:
-        tarbz2=False
         name, version, platform, dist_name = link['name'], link['version'], link['platform'], link['dist_name']
         url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.conda'
         print(f"Process: Downloading file from URL: {url}")
@@ -32,7 +31,6 @@ def process_links(links):
         response = requests.get(url)
         if response.status_code != 200:
             url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.tar.bz2'
-            tarbz2=True
             print(f"Process: Downloading file from URL: {url}")
             response = requests.get(url)
             if response.status_code != 200:
@@ -54,12 +52,8 @@ def process_links(links):
             'sha256': sha256_hash,
             'dest-filename': file_name
         })
-        if tarbz2:
-            install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {file_name}.tar.bz2')
-            mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{file_name}.tar.bz2')
-        else:
-            install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {file_name}.conda')
-            mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{file_name}.conda')
+        install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {file_name}')
+        mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{file_name}')
         os.remove(file_name)
             
     return install, mamba_install, sources
