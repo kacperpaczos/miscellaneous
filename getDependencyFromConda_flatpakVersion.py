@@ -19,12 +19,12 @@ def load_json_file():
     return links
 
 def process_links(links):
-    tarbz2=False
     install = []
     mamba_install = []
     sources = []
     print("Initiating process: Processing each link")
     for link in links:
+        tarbz2=False
         name, version, platform, dist_name = link['name'], link['version'], link['platform'], link['dist_name']
         url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.conda'
         print(f"Process: Downloading file from URL: {url}")
