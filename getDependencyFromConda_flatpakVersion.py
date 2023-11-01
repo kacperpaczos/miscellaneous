@@ -2,10 +2,11 @@ import json
 import subprocess
 import hashlib
 import requests
+import os
 from datetime import datetime
 
 def create_conda_env():
-    print("Initiating process: Creation of conda environment")
+    print("Initiating process: Creating of conda environment")
     subprocess.run(['conda', 'create', '--name', 'temp', '--dry-run', '--json', 'jupyterlab', '-c', 'conda-forge'], stdout=open('dependencies.json', 'w'))
 
 def load_json_file():
@@ -13,6 +14,8 @@ def load_json_file():
     with open('dependencies.json', 'r') as file:
         data = json.load(file)
         links = data['actions']['LINK']
+        with open('links.json', 'a') as file:
+            json.dump(links, file)
     return links
 
 def process_links(links):
@@ -21,30 +24,37 @@ def process_links(links):
     sources = []
     print("Initiating process: Processing each link")
     for link in links:
-        name, version = link['name'], link['version']
-        install.append(f'install -Dm 755 -t $FLATPAK_DEST/download {name}.conda')
-        mamba_install.append(f'$FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{name}.conda')
-        url = f'https://anaconda.org/conda-forge/{name}/{version}/download/linux-64/{name}-{version}.conda'
+        name, version, platform, dist_name = link['name'], link['version'], link['platform'], link['dist_name']
+        install.append(f' - install -Dm 755 -t $FLATPAK_DEST/download {name}.conda')
+        mamba_install.append(f' - $FLATPAK_DEST/anaconda/bin/mamba install $FLATPAK_DEST/download/{name}.conda')
+        url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.conda'
         print(f"Process: Downloading file from URL: {url}")
-        try:
+        file_name = f'{name}.conda'
+        response = requests.get(url)
+        if response.status_code != 200:
+            url = f'https://anaconda.org/conda-forge/{name}/{version}/download/{platform}/{dist_name}.tar.bz2'
+            print(f"Process: Downloading file from URL: {url}")
             response = requests.get(url)
-            sha256_hash = hashlib.sha256(response.content).hexdigest()
-            sources.append({
-                '- type': 'file',
-                'only-arches': ' x86_64',
-                'url': url,
-                'sha256': sha256_hash,
-                'dest-filename': f'{name}.conda'
-            })
-        except:
-            print("Failure occurred. Exception handling initiated. Unable to calculate checksum.")
-            sources.append({
-                '- type': 'file',
-                'only-arches': ' x86_64',
-                'url': url,
-                'sha256': 'idontknow',
-                'dest-filename': f'{name}.conda'
-            })
+            if response.status_code != 200:
+                print("Failure occurred. Exception handling initiated. Unable to download file.")
+                continue
+        with open(file_name, 'wb') as file:
+            file.write(response.content)
+        with open(file_name, 'rb') as file:
+            content = file.read()
+        try:
+            sha256_hash = hashlib.sha256(content).hexdigest()
+        except Exception:
+            sha256_hash = "unknown"
+        sources.append({
+            '- type': 'file',
+            'only-arches': ' x86_64',
+            'url': url,
+            'sha256': sha256_hash,
+            'dest-filename': file_name
+        })
+        os.remove(file_name)
+            
     return install, mamba_install, sources
 
 def display_sources(install, mamba_install, sources):
