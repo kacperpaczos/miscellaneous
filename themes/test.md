@@ -12,7 +12,7 @@
 
 * Kolor tekstu 2: `#94a3b8` <span style="background-color:#94a3b8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-* Element aktywny: `#334155` <span style="background-color:#334155">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+* Element aktywny: `#7239b3` <span style="background-color:#7239b3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
 * Element aktywny obrys: brak
 
@@ -32,11 +32,11 @@
 
 * Obrys elementu UI 1: `#cacaca` <span style="background-color:#cacaca">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-* Kolor tekstu 1: `#ffffff` <span style="background-color:#ffffff">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+* Kolor tekstu 1: `#333333` <span style="background-color:#333333">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-* Kolor tekstu 2: `#94a3b8` <span style="background-color:#94a3b8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+* wKolor tekstu 2: `#1a1a1a` <span style="background-color:#1a1a1a">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
-* Element aktywny: `#334155` <span style="background-color:#334155">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+* Element aktywny: `#7239b3` <span style="background-color:#7239b3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
 
 * Element aktywny obrys: brak
 
