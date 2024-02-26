@@ -1,0 +1,35 @@
+# SSH login: root password: root
+# filesilla: sftp://localhost:41061
+# strony są w katalogu /www
+# po stworzeniu www ~> http://localhost:41062/www/test/
+# Baza danych/SQL: login: root i hasło (jeśli  jest): root
+# Więcej info: https://github.com/tomsik68/docker-xampp
+
+
+version: '3'
+services:
+  szymon:
+    image: tomsik68/xampp:8
+    ports:
+      - "41061:22"
+      - "41062:80"
+  uczen1:
+    image: tomsik68/xampp:8
+    ports:
+      - "42061:22"
+      - "42062:80"
+  uczen2:
+    image: tomsik68/xampp:8
+    ports:
+      - "43061:22"
+      - "43062:80"
+  uczen3:
+    image: tomsik68/xampp:8
+    ports:
+      - "44061:22"
+      - "44062:80"
+  uczen4:
+    image: tomsik68/xampp:8
+    ports:
+      - "45061:22"
+      - "45062:80"
