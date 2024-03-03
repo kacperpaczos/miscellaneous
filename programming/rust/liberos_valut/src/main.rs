@@ -12,9 +12,10 @@ use hyper::{
     service::service_fn,
     Request, Response,
 };
+
 use tokio::net::TcpListener;
-use tokio::io::self
-//use hyper_util::rt::{TokioIo, TokioTimer};
+use hyper_util::rt::tokio::TokioTimer;
+use hyper_util::rt::TokioIo;
 
 // An async function that consumes a request, does nothing with it and returns a
 // response.
@@ -53,7 +54,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
             // Handle the connection from the client using HTTP1 and pass any
             // HTTP requests received on that connection to the `hello` function
             if let Err(err) = http1::Builder::new()
-                .timer(TokioTimer)
+                .timer(TokioTimer::default())
                 .serve_connection(io, service_fn(hello))
                 .await
             {
@@ -62,3 +63,5 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         });
     }
 }
+
+
